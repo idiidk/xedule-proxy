@@ -1,0 +1,25 @@
+{
+  "name": "xedule-proxy-auth-server",
+  "version": "1.0.0",
+  "description": "Xedule proxy auth server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idiidk/xedule-proxy.git"
+  },
+  "keywords": [
+    "xedule"
+  ],
+  "author": "idiidk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/idiidk/xedule-proxy/issues"
+  },
+  "homepage": "https://github.com/idiidk/xedule-proxy#readme",
+  "dependencies": {
+    "puppeteer": "^17.1.3"
+  }
+}
