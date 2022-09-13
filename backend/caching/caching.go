@@ -23,21 +23,21 @@ func InitCacheManager() error {
 	return err
 }
 
-func MarshalCache(ctx context.Context, key, object any, options ...store.Option) error {
+func MarshalCache(key string, object any, options ...store.Option) error {
 	bytes, err := msgpack.Marshal(object)
 	if err != nil {
 		return err
 	}
 
-	return metricCache.Set(ctx, key, bytes, options...)
+	return metricCache.Set(context.Background(), key, bytes, options...)
 }
 
-func UnmarshalCache(ctx context.Context, key, obj interface{}) error {
-	data, err := metricCache.Get(ctx, key)
+func UnmarshalCache(key string, object any) error {
+	bytes, err := metricCache.Get(context.Background(), key)
 	if err != nil {
 		return err
 	}
 
-	msgpack.Unmarshal(data, obj)
+	msgpack.Unmarshal(bytes, &object)
 	return nil
 }

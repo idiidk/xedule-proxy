@@ -1,59 +1,56 @@
 package xedule
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/cookiejar"
-	"net/url"
 
 	"github.com/idiidk/xedule-proxy/caching"
 	"github.com/idiidk/xedule-proxy/xedule/models"
 )
 
-func AuthServerCookieToJar(authServerCookies []models.AuthServerCookie) (*cookiejar.Jar, error) {
-	var cookieDomain string
-	var cookies []*http.Cookie
+var authEndpoint string
+var authSecret string
 
-	for _, cookie := range authServerCookies {
-		cookieDomain = cookie.Domain
-		cookieToSet := http.Cookie{
-			Name:  cookie.Name,
-			Value: cookie.Value,
-		}
+var xeduleEndpoint string
 
-		cookies = append(cookies, &cookieToSet)
-	}
+func InitXedule(authServerConfig models.AuthServerConfig) error {
+	authEndpoint = authServerConfig.Endpoint
+	authSecret = authServerConfig.Secret
 
-	domainUrl, err := url.Parse(fmt.Sprintf("https://%s", cookieDomain))
+	res, err := GetAuthServerResponse()
 	if err != nil {
-		return nil, err
+		return err
 	}
+	xeduleEndpoint = res.Config.XeduleURL
 
-	cookieJar.SetCookies(domainUrl, cookies)
-	return cookieJar, nil
+	return nil
 }
 
-func GetAuthenticatedCookieJar(endpoint string, secret string) (*cookiejar.Jar, error) {
-	cacheKey := "cookie-jar"
-	var authServerCookies []models.AuthServerCookie
+func GetGroups() ([]models.XeduleGroup, error) {
+	cacheKey := "groups"
 
-	err := caching.UnmarshalCache(context.Background(), cacheKey, cookieJar)
+	var groups []models.XeduleGroup
+	err := caching.UnmarshalCache(cacheKey, &groups)
 	if err == nil {
-		fmt.Println("WE ARE USING CACHE LETSGO EZ PZ LEMON SQUEEZE")
-		return cookieJar, nil
+		return groups, nil
 	}
 
-	var authServerCookies []models.AuthServerCookie
-	resp, err := http.Get(fmt.Sprintf("%s?secret=%s", endpoint, secret))
+	client, err := GetAuthenticatedHttpClient()
 	if err != nil {
 		return nil, err
 	}
 
-	json.NewDecoder(resp.Body).Decode(&authServerCookies)
+	res, err := client.Get(fmt.Sprintf("%s/api/group", xeduleEndpoint))
+	if err != nil {
+		return nil, err
+	}
 
-	caching.MarshalCache(context.Background(), cacheKey, cookieJar)
+	err = json.NewDecoder(res.Body).Decode(&groups)
+	if err != nil {
+		return nil, err
+	}
 
-	return cookieJar, nil
+	caching.MarshalCache(cacheKey, groups)
+
+	return groups, nil
 }

@@ -13,5 +13,10 @@ func InitRoutes(router *gin.Engine) {
 			statusController := new(controllers.StatusController)
 			statusController.RegisterRoutes(statusGroup)
 		}
+		groupGroup := v1.Group("/group")
+		{
+			groupController := new(controllers.GroupController)
+			groupController.RegisterRoutes(groupGroup)
+		}
 	}
 }

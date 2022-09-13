@@ -1,6 +1,6 @@
 package models
 
-type XeduleGroup []struct {
+type XeduleGroup struct {
 	AttDLs []interface{} `json:"attDLs"`
 	Orus   []int         `json:"orus"`
 	Code   string        `json:"code"`
