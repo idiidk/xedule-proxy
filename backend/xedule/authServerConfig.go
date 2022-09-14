@@ -1,4 +1,4 @@
-package models
+package xedule
 
 type AuthServerConfig struct {
 	Endpoint string

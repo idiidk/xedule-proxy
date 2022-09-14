@@ -1,6 +1,6 @@
 package models
 
-type XeduleSchedule []struct {
+type XeduleSchedule struct {
 	IPublicationDate string `json:"iPublicationDate"`
 	Concept          bool   `json:"concept"`
 	Apps             []struct {

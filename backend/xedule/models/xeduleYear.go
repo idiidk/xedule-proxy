@@ -1,6 +1,6 @@
 package models
 
-type XeduleYear []struct {
+type XeduleYear struct {
 	Oru            int         `json:"oru"`
 	Year           int         `json:"year"`
 	Schs           []int       `json:"schs"`

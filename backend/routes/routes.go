@@ -18,5 +18,10 @@ func InitRoutes(router *gin.Engine) {
 			groupController := new(controllers.GroupController)
 			groupController.RegisterRoutes(groupGroup)
 		}
+		organisationalUnitGroup := v1.Group("/organisationalUnit")
+		{
+			groupController := new(controllers.OrganisationalUnitController)
+			groupController.RegisterRoutes(organisationalUnitGroup)
+		}
 	}
 }

@@ -1,6 +1,6 @@
 package models
 
-type XeduleDocent []struct {
+type XeduleDocent struct {
 	AttTLs []interface{} `json:"attTLs"`
 	AttGLs []interface{} `json:"attGLs"`
 	Name   string        `json:"name"`

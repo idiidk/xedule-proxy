@@ -1,6 +1,6 @@
 package models
 
-type XeduleClassroom []struct {
+type XeduleClassroom struct {
 	Orus []int    `json:"orus"`
 	Code string   `json:"code"`
 	ID   string   `json:"id"`

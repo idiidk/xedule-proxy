@@ -20,7 +20,7 @@ const fastify = require("fastify")({ logger: true });
   const response = await page.goto(XEDULE_URL);
 
   const responseUrl = response.url();
-  if(!responseUrl.startsWith(XEDULE_URL)) {
+  if (!responseUrl.startsWith(XEDULE_URL)) {
     console.error(`init cookie invalid?, got redirected to ${responseUrl}`);
     process.exit(1);
   }
@@ -45,7 +45,13 @@ const fastify = require("fastify")({ logger: true });
       return { error: "invalid secret" };
     }
 
-    return currentCookies.map((e) => ({ name: e.name, value: e.value, domain: e.domain }));
+    const cookies = currentCookies.map((e) => ({
+      name: e.name,
+      value: e.value,
+      domain: e.domain,
+    }));
+    const config = { xeduleUrl: XEDULE_URL };
+    return { cookies, config };
   });
 
   await fastify.listen({ port: PORT });

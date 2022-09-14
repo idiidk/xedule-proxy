@@ -7,7 +7,6 @@ import (
 	"github.com/idiidk/xedule-proxy/caching"
 	"github.com/idiidk/xedule-proxy/routes"
 	"github.com/idiidk/xedule-proxy/xedule"
-	"github.com/idiidk/xedule-proxy/xedule/models"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -28,7 +27,7 @@ func main() {
 		panic("AUTH_SERVER_SECRET set up incorrectly!!")
 	}
 
-	err = xedule.InitXedule(models.AuthServerConfig{Endpoint: authServerEndpoint, Secret: authServerSecret})
+	err = xedule.InitXedule(xedule.AuthServerConfig{Endpoint: authServerEndpoint, Secret: authServerSecret})
 	if err != nil {
 		panic(err)
 	}
