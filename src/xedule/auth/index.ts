@@ -47,7 +47,6 @@ export default class XeduleAuthMonitor {
     } catch (err) {
       if (err.code === 'ENOENT') {
         console.error(chalk.red('No cookie file found, skipping...'));
-        this.refreshCookie();
       } else {
         console.error(chalk.red(err));
       }
