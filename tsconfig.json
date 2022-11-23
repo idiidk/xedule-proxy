@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "build",
+    "baseUrl": "./src",
+    "paths": {
+      "@root/*": ["./*"]
+    },
+    "target": "ESNext",
+    "module": "CommonJS",
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
