@@ -1,3 +1,4 @@
+import Logger from '@root/logger';
 import axios, { AxiosInstance } from 'axios';
 import { Cache, CacheContainer } from 'node-ts-cache';
 import { MemoryStorage } from 'node-ts-cache-storage-memory';
@@ -48,6 +49,13 @@ export default class Xedule {
     return this.http
       .get('/group')
       .then((res) => res.data.map((e) => e as XeduleModels.Group));
+  }
+
+  @Cache(xeduleCache)
+  async organisationalUnit() {
+    return this.http
+      .get('/organisationalUnit')
+      .then((res) => res.data.map((e) => e as XeduleModels.OrganisationalUnit));
   }
 
   // Singleton

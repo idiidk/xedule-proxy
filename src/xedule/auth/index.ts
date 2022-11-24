@@ -1,3 +1,4 @@
+import Logger, { LoggerLogLevel } from '@root/logger';
 import * as chalk from 'chalk';
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
@@ -7,6 +8,7 @@ import XeduleEncryption, { XeduleEncryptionHash } from './encryption';
 
 export default class XeduleAuthMonitor {
   private endpoint: string;
+  private logger: Logger;
   private page: puppeteer.Page;
   private cookieFile: string = join(
     process.cwd(),
@@ -17,18 +19,19 @@ export default class XeduleAuthMonitor {
 
   constructor(endpoint: string) {
     this.endpoint = endpoint;
+    this.logger = Logger.getInstance('AuthProxy', chalk.cyan.bold);
     this.cookieStream = new Stream.Writable();
   }
 
   public async monitor() {
-    console.log(chalk.blue('Starting Xedule auth monitor...'));
+    this.logger.log('Starting Xedule auth monitor...');
 
     // Start puppeteer
     const browser = await puppeteer.launch({ headless: true });
     this.page = await browser.newPage();
 
     // Load cookies from file
-    console.log(chalk.blue('Loading cookies from file...'));
+    this.logger.log('Loading cookies from file...');
 
     try {
       // Read the file and decrypt the cookies
@@ -46,16 +49,16 @@ export default class XeduleAuthMonitor {
       this.cookieStream.emit('cookies', decryptedCookies);
     } catch (err) {
       if (err.code === 'ENOENT') {
-        console.error(chalk.red('No cookie file found, skipping...'));
+        this.logger.log('No cookie file found, skipping...', LoggerLogLevel.Error);
       } else {
-        console.error(chalk.red(err));
+        this.logger.log(err, LoggerLogLevel.Error);
       }
     }
 
     this.refreshCookie();
     // Start timer to refresh cookies
     setInterval(() => {
-      console.log(chalk.blue('Refreshing Xedule cookie...'));
+      this.logger.log('Refreshing Xedule cookie...');
       this.refreshCookie();
     }, Number.parseInt(process.env.XEDULE_INTERVAL) * 60 * 1000);
   }
@@ -65,7 +68,7 @@ export default class XeduleAuthMonitor {
 
     // Not logged in, start the refresh procedure
     if (await this.page.url().startsWith('https://login.microsoft')) {
-      console.log(chalk.yellow('Relogging into Xedule...'));
+      this.logger.log('Relogging into Xedule...', LoggerLogLevel.Warn);
 
       await this.page.waitForNavigation();
       await this.typeUsername(process.env.XEDULE_USERNAME);
@@ -83,16 +86,16 @@ export default class XeduleAuthMonitor {
     this.cookieStream.emit('cookies', cookies);
     await this.saveCookies(cookies);
     
-    console.log(chalk.green('Refreshed auth cookie'));
+    this.logger.log('Refreshed auth cookie');
   }
 
   private async saveCookies(cookies) {
-    console.log(chalk.blue('Saving cookies...'));
+    this.logger.log('Saving cookies...');
 
     const encryptedCookies = XeduleEncryption.encrypt(JSON.stringify(cookies));
     await writeFile(this.cookieFile, JSON.stringify(encryptedCookies));
 
-    console.log(chalk.green('Saved cookies...'));
+    this.logger.log('Saved cookies...');
   }
 
   private async getCookiesForAllDomains(page: puppeteer.Page) {
